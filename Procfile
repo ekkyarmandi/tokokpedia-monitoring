@@ -1,0 +1,1 @@
+tokped: python3 main.py
