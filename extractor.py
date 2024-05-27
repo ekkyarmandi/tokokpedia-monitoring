@@ -85,47 +85,19 @@ def get_products(response_text):
     return products
 
 
-def dev():
-    with open("new-index.html") as file:
-        text = file.read()
-        soup = BeautifulSoup(text, "html.parser")
-
-        products = soup.select_one("div[data-testid*=ContentProducts]").select(
-            "div[data-testid=master-product-card]"
-        )
-        for p in products:
-            title = p.select_one("div[data-testid=spnSRPProdName]").text
-            image = p.select_one("img").get("src")
-            link = p.select_one("a").get("href")
-            price = p.select_one("div[data-testid=spnSRPProdPrice]").text
-            prev_price = p.select_one("div[data-testid=lblProductSlashPrice]")
-            if prev_price:
-                prev_price = prev_price.text
-            disc = p.select_one("div[data-testid=spnSRPProdDisc]")
-            if disc:
-                disc = disc.text
-            else:
-                disc = "0%"
-            city = p.select_one("span[data-testid=spnSRPProdTabShopLoc]")
-            seller = city.find_next("span").text
-            seller_city = city.text
-            product = {
-                "title": title,
-                "image": image,
-                "link": link,
-                "price": price,
-                "prev_price": prev_price,
-                "disc": disc,
-                "seller": seller,
-                "seller_city": seller_city,
-            }
-            print(product)
-
-
-def main():
-    # get_div()
-    dev()
-
-
-if __name__ == "__main__":
-    main()
+def product_to_html(p):
+    seller_path = p["link"].split("/")[3]
+    html = f"""<div class="container">
+        <img src="{p['image']}" alt="{p['title']}" />
+        <div class="wrapper">
+            <p class="title"><a href="{p['link']}">{p['title']}</a></p>
+            <p>
+                <a href="https://www.tokopedia.com/{seller_path}">{p['seller']},</a>
+                <span>{p['seller_city']}</span>
+            </p>
+            <p>Harga <span>{p['price']}</span></p>
+            <p>{p['solds']}</p>
+        </div>
+    </div>
+    """
+    return html
